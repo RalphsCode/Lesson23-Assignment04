@@ -18,6 +18,10 @@ Configure run&debug to run the server and test localhost (file 5)
 
 Install & test debug toolbar (file 5)
 
-Install SQLAlchemy and set it up to talk to app.py (file 7)
+Create a database using psql (file 6)
+
+Import SQLAlchemy and set it up with the database (file 7)
+
+Create the models.py file, and set up the database connection (file 7)
 
 
