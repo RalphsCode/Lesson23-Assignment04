@@ -1,0 +1,23 @@
+Steps to creating a Flask, SQL, JS full stack project
+
+Create folder, and VENV (file 4)
+
+Set up git version control (file 1)
+
+Create a .gitignore file in the root folder, and add venv/ to it (file 1)
+
+Create app.py file
+
+Create flask server (file 5)
+
+Set up an HTML homepage and access via Flask app.route decorator in the app.py.  (file 5)
+
+Create template inheritance (Jinja), base file, and test (file 5)
+
+Configure run&debug to run the server and test localhost (file 5)
+
+Install & test debug toolbar (file 5)
+
+Install SQLAlchemy and set it up to talk to app.py (file 7)
+
+
