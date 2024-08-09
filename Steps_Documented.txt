@@ -26,6 +26,10 @@ Create the models.py file, and set up the database connection (file 7)
 
 Set up a model for a database table (file 7)
 
+Seed the table with some users (file 7)
+
+Create a WTForm to register a user (file 8)
+
 
 
 
