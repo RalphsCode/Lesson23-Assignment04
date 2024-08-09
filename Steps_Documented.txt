@@ -24,4 +24,8 @@ Import SQLAlchemy and set it up with the database (file 7)
 
 Create the models.py file, and set up the database connection (file 7)
 
+Set up a model for a database table (file 7)
+
+
+
 
