@@ -9,6 +9,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "RalphsCode123"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Ponderosa@localhost/flask_feedback'
 app.config['SECRET_KEY'] = 'RalphsCode123'
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 
 debug = DebugToolbarExtension(app)
 
@@ -34,7 +35,7 @@ def register():
         flash("Form Submitted Successfully.")
         username = form.username.data
         password = form.password.data
-        # Hash the password
+        # Hash the password *** NOT USED ***
         password_hashed = hash(password)
         # password_utf = password_hashed.encode('utf-8')
         email = form.email.data
@@ -42,7 +43,7 @@ def register():
         last_name = form.last_name.data
 
         # create a new_user object
-        new_user = User(username=username, password=password_hashed, email=email, first_name=first_name, last_name=last_name)
+        new_user = User(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
         # insert the new_user object into the database
         db.session.add(new_user)
         db.session.commit()
@@ -56,6 +57,23 @@ def register():
 @app.route('/login', methods=["GET", "POST"])
 def login():
     form = Login()
+    if form.validate_on_submit(): # only works on the post request
+        username = form.username.data
+        password = form.password.data
+        # Hash the password  *** NOT USED ***
+        password_hashed = hash(password)
+        curr_user = User.query.filter(User.username == username).first()
+        if curr_user:
+            if curr_user.password == password:
+                flash(f'Found username "{username}" in database, and password matched.')
+                return redirect('/secret')
+            else:
+                flash(f'Found username "{username}" in database, BUT password ({password} was not correct.')
+                return redirect("/login")
+        else:
+            flash(f'Did NOT find user "{username}" in database.')
+            return redirect("/login")
+
     return render_template('login.html', form=form)
 
 
