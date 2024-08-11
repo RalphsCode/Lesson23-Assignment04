@@ -6,15 +6,19 @@ New User Sign Up
 
 {% block content %}
 <h1 class="text-primary">New User Sign Up</h1>
-<form action="/register" method="POST">
+<form action="/register" method="POST" class="form-control">
     {{ form.hidden_tag() }}  <!-- CSRF Token -->
     {% for field in form
         if field.widget.input_type != 'hidden' %}
         <p>
-            {{field.label}}
+            {{field.label}}<br>
             {{field}}
         </p>
         {% endfor %} 
     <button class="btn btn-primary">Register</button>
 </form>
+<br>
+<p>
+<a href="/home" class="btn btn-primary">Home Page</a>
+<p>
 {% endblock %}

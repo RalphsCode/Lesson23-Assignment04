@@ -25,3 +25,15 @@ class User(db.Model):
     last_name = db.Column(db.String(30), nullable=False)
 
     
+class Feedback(db.Model):
+    """Stores the user's feedback"""
+
+    __tablename__ = "feedback"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+
+    title = db.Column(db.String(100), nullable=False)
+
+    content = db.Column(db.String, nullable=False)
+
+    username = db.Column(db.String, db.ForeignKey('users.username'))

@@ -49,7 +49,7 @@ def register():
         db.session.commit()
 
         # set the user session variable 
-        session['username'] = [new_user.username]
+        session['username'] = [username]
         return redirect('/secret')
 
     return render_template('register.html', form=form)
@@ -65,8 +65,10 @@ def login():
         curr_user = User.query.filter(User.username == username).first()
         if curr_user:
             if curr_user.password == password:
+                # set the user session variable 
+                session['username'] = [username]
                 flash(f'Found username "{username}" in database, and password matched.')
-                return redirect('/secret')
+                return redirect(f'/users/{username}')
             else:
                 flash(f'Found username "{username}" in database, BUT password ({password} was not correct.')
                 return redirect("/login")
@@ -77,6 +79,16 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route('/secret')
-def secret():
-    return "You made it!"
+@app.route('/logout')
+def logout():
+    session.pop('username')
+    return redirect("/home")
+
+@app.route('/users/<username>')
+def profile(username):
+    if 'username' in session:
+        user = User.query.filter(User.username == username).first()
+        return render_template('user_profile.html', user=user)
+    else:
+        flash("You must be logged in to see that page")
+        return redirect("/login")
