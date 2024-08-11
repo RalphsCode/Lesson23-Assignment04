@@ -12,6 +12,14 @@ Sign In
     <li>First Name: {{user.first_name}}</li>
     <li>Last Name: {{user.last_name}}</li>
 </ul>
+<p class="btn btn-warning"><a href="/users/{{user.username}}/delete" >Delete User</a></p>
+<br>
+<h1>Feedback Posts:</h1>
+<ol>
+    {% for post in posts %}
+    <li>{{post.content}}</li>
+    {% endfor %}
+</ol>
 
 <br>
 <p>

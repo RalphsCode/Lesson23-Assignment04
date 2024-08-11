@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_sqlalchemy import SQLAlchemy
-from models import db, connect_db, User
+from models import db, connect_db, User, Feedback
 from forms import Register, Login
 
 # app configuration files
@@ -86,9 +86,28 @@ def logout():
 
 @app.route('/users/<username>')
 def profile(username):
-    if 'username' in session:
+    if username in session['username']:
         user = User.query.filter(User.username == username).first()
-        return render_template('user_profile.html', user=user)
+        if Feedback.query.filter(Feedback.username == username).first():
+            posts = Feedback.query.filter(Feedback.username == username).all()
+            return render_template('user_profile.html', user=user, posts=posts)
+        else:
+            flash("You may not access the profile, nor modify the feedback, of others")
+            return render_template('user_profile.html', user=user)
     else:
         flash("You must be logged in to see that page")
         return redirect("/login")
+    
+@app.route('/users/<username>/delete')
+def delete(username):
+    if username in session['username']:
+        if Feedback.query.filter(Feedback.username == username).first():
+            Feedback.query.filter(Feedback.username == username).delete()
+        User.query.filter(User.username == username).delete()
+        db.session.commit()
+        session.pop('username')
+        return redirect("/")
+    else:
+        flash("You do not have access to delete user. Please log in again.")
+        session.pop('username')
+        return redirect ("/")
