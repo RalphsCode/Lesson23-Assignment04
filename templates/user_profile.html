@@ -7,14 +7,26 @@ Sign In
 {% block content %}
 <h1>User Profile:</h1>
 <ul>
-    <li>Username: {{user.username}}</li>
-    <li>Email: {{user.email}}</li>
-    <li>First Name: {{user.first_name}}</li>
-    <li>Last Name: {{user.last_name}}</li>
+    <li>Username: <b>{{user.username}}</b></li>
+    <li>Email: <b>{{user.email}}</b></li>
+    <li>First Name: <b>{{user.first_name}}</b></li>
+    <li>Last Name: <b>{{user.last_name}}</b></li>
 </ul>
 <p class="btn btn-warning"><a href="/users/{{user.username}}/delete" >Delete User</a></p>
 <br>
-<h1>Feedback Posts:</h1>
+<h1>Feedback</h1>
+<form action="/users/{{user.username}}/feedback/add" method="post">
+    {{ form.hidden_tag() }} 
+    {% for field in form
+        if field.widget.input_type != 'hidden' %}
+        <p>
+            {{field.label}}<br>
+            {{field}}
+        </p>
+        {% endfor %} 
+    <button class="btn btn-success">Add Feedback</button>
+    </form><br>
+<h1>Previous Posts:</h1>
 <ol>
     {% for post in posts %}
     <li>{{post.content}}</li>

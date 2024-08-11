@@ -1,8 +1,8 @@
 from flask import Flask, render_template, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy
 from models import db, connect_db, User, Feedback
-from forms import Register, Login
+from forms import Register, Login, Feedback_Form
 
 # app configuration files
 app = Flask(__name__)
@@ -87,10 +87,11 @@ def logout():
 @app.route('/users/<username>')
 def profile(username):
     if username in session['username']:
+        form = Feedback_Form()
         user = User.query.filter(User.username == username).first()
         if Feedback.query.filter(Feedback.username == username).first():
             posts = Feedback.query.filter(Feedback.username == username).all()
-            return render_template('user_profile.html', user=user, posts=posts)
+            return render_template('user_profile.html', user=user, posts=posts, form=form)
         else:
             flash("You may not access the profile, nor modify the feedback, of others")
             return render_template('user_profile.html', user=user)
@@ -111,3 +112,23 @@ def delete(username):
         flash("You do not have access to delete user. Please log in again.")
         session.pop('username')
         return redirect ("/")
+    
+@app.route('/users/<username>/feedback/add', methods=["POST"])
+def add_feedback(username):
+    form = Feedback_Form()
+    # POST route
+    if form.validate_on_submit():
+        feedback = form.feedback.data
+        User.query.filter(User.username == username).first()
+        new_feedback = Feedback(title="Feedback", content= feedback, username=username)
+
+        with app.app_context():
+            # Add objects to the session
+            db.session.add(new_feedback)
+            # Commit to database
+            db.session.commit()
+
+    return redirect(f"/users/{username}")    
+
+        
+
