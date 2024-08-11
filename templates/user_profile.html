@@ -28,9 +28,14 @@ Sign In
     </form><br>
 <h1>Previous Posts:</h1>
 <ol>
-    {% for post in posts %}
-    <li>{{post.content}}</li>
-    {% endfor %}
+    <!-- Check if user has existing posts -->
+    {% if posts %}
+        {% for post in posts %}
+        <li>{{post.content}}</li>
+        {% endfor %}
+    {% else %}
+    <li>Submit your first feedback post above!</li>
+    {% endif %}
 </ol>
 
 <br>
