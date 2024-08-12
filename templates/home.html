@@ -6,7 +6,13 @@ Ralph's Feedback Home Page
 
 {% block content %}
 <h1 class="text-primary">Ralph's Feedback Home Page</h1>
-<p>Currently in username session: {{session['username'] }}</p>
+<p>Current session username: 
+    {% if session['username'] %}
+    <b>{{session['username'][0] }}</b>
+    {% else %}
+    <b>None</b>
+    {% endif %}
+</p>
 
 <ul>
     <li>Home</li>
