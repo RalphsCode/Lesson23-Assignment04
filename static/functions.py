@@ -2,13 +2,18 @@
 
 from flask import session
 
+
+def check_login(username ="no_user"):
+    """Returns True if user logged in """
+    try: 
+        if username in session['username']:
+            return True
+    except KeyError:
+        return False
+
+
 def end_session():
     """Deletes a user from session / ends a user session"""
-    session.pop('username')
+    if check_login():
+        session.pop('username')
     return True
-
-def check_login(username):
-    """Returns True if user logged in """
-    if username in session['username']:
-        return True
-    return False

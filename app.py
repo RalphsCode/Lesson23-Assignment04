@@ -36,40 +36,42 @@ def register():
     form = Register()
     # using a try/except block in case there is no username variable stored in session
     try:
-
         if session['username']:
-             # if a user is already logged in, log them out;
+            # if a user is already logged in, log them out;
             end_session()
-            if form.validate_on_submit(): # only works on the post request
-                flash("Form Submitted Successfully.")
-                username = form.username.data
-                password = form.password.data
-                # Hash the password *** NOT USED ***
-                # password_hashed = hash(password)
-                # password_utf = password_hashed.encode('utf-8')
-                email = form.email.data
-                first_name = form.first_name.data
-                last_name = form.last_name.data
-
-                # create a new_user object
-                new_user = User(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
-                # insert the new_user object into the database
-                db.session.add(new_user)
-                db.session.commit()
-
-                # set the user session variable 
-                session['username'] = [username]
-
-                # Forward the user to their profile page
-                return redirect(f"/users/{username}")
-
-        # GET route, to display the new user registration page
-        return render_template('register.html', form=form)
-    
-    # If there is no username session variable
     except KeyError:
-        flash("Please log in to access this page")
-        return redirect("/login")
+        print("No user in Session")
+    
+    if form.validate_on_submit(): # only works on the post request
+        flash("Form Submitted Successfully.")
+        username = form.username.data
+        password = form.password.data
+        # Hash the password *** NOT USED ***
+        # password_hashed = hash(password)
+        # password_utf = password_hashed.encode('utf-8')
+        email = form.email.data
+        first_name = form.first_name.data
+        last_name = form.last_name.data
+
+        # create a new_user object
+        new_user = User(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
+        # insert the new_user object into the database
+        db.session.add(new_user)
+        db.session.commit()
+
+        # set the user session variable 
+        session['username'] = [username]
+
+        # Forward the user to their profile page
+        return redirect(f"/users/{username}")
+
+    # GET route, to display the new user registration page
+    return render_template('register.html', form=form)
+    
+    # # If there is no username session variable
+    # except KeyError:
+    #     flash("Please log in to access this page")
+    #     return redirect("/login")
 
 
 @app.route('/login', methods=["GET", "POST"])
@@ -215,9 +217,25 @@ def edit_feedback(feedback_id):
             return redirect(f"/users/{session['username'][0]}")
 
         except KeyError:
-            flash("You must be logged in to see that page")
+            flash("Not Authorized")
             return redirect("/login")
 
   
-
-
+@app.route('/feedback/<feedback_id>/delete')
+def delete_feedback_post(feedback_id):
+    """Delete a specific feedback post"""
+    feedback = Feedback.query.get_or_404(feedback_id)
+            # use try/except block to check if there is a username in session
+    try: 
+        # Check if this username 'owns' the feedback post
+        if check_login(feedback.username):
+            Feedback.query.filter_by(id=feedback_id).delete()
+            db.session.commit()
+            return redirect(f"/users/{session['username'][0]}")
+        else:
+            # User does not 'own' that feedback
+            flash("ERROR: You do not have access")
+        return redirect(f"/users/{session['username'][0]}")
+    except KeyError:
+        flash("Not Authorized")
+        return redirect("/login")
