@@ -7,3 +7,8 @@ def end_session():
     session.pop('username')
     return True
 
+def check_login(username):
+    """Returns True if user logged in """
+    if username in session['username']:
+        return True
+    return False

@@ -10,6 +10,9 @@ Ralph's Feedback Home Page
 
 <ul>
     <li>Home</li>
+    {% if session['username'] %}
+    <li><a href="/users/{{ session['username'][0] }}">User Profile & Feedback Posts</a></li>
+    {% endif %}
     <li><a href="/register">Register</a></li>
     <li><a href="/login">Log In</a></li>
     <li><a href="/logout">Log Out</a></li>

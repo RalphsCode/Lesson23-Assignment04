@@ -12,8 +12,8 @@ Sign In
     <li>First Name: <b>{{user.first_name}}</b></li>
     <li>Last Name: <b>{{user.last_name}}</b></li>
 </ul>
-<p class="btn btn-warning"><a href="/users/{{user.username}}/delete" >Delete User</a></p>
-<br>
+<p><a href="/users/{{user.username}}/delete"  class="btn btn-danger">Delete User</a></p>
+
 <h1>Feedback</h1>
 <form action="/users/{{user.username}}/feedback/add" method="post">
     {{ form.hidden_tag() }} 
@@ -41,6 +41,7 @@ Sign In
 <br>
 <p>
 <a href="/home" class="btn btn-primary">Home Page</a>
+<a href="/logout" class="btn btn-warning">Log Out</a>
 <p>
 
 {% endblock %}

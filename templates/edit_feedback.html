@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Ralph's Feedback Home Page
+{% endblock %}
+
+{% block content %}
+<h1 class="text-primary">Edit Feedback</h1>
+<form action="/feedback/{{feedback.id}}/update" method="POST" class="form-control">
+    {{ form.hidden_tag() }}  <!-- CSRF Token -->
+    {% for field in form
+        if field.widget.input_type != 'hidden' %}
+        <p>
+            {{field.label}}<br>
+            {{field}}
+        </p>
+        {% endfor %} 
+    <a href="/users/{{feedback.username}}" class="btn btn-primary">Cancel</a>
+    <button class="btn btn-success">Update</button>
+    <a href="" class="btn btn-warning">Delete Post</a>
+</form>
+{% endblock %}

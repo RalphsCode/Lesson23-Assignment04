@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 from models import db, connect_db, User, Feedback
 from forms import Register, Login, Feedback_Form
-from static.functions import end_session
+from static.functions import end_session, check_login
 
 # app configuration files
 app = Flask(__name__)
@@ -17,15 +17,18 @@ with app.app_context():
     connect_db(app)
     db.create_all()
 
+
 @app.route('/home')
 def home():
     """App home page, showing links to the various views"""
     return render_template('home.html')
 
+
 @app.route('/')
 def slash():
     """App start page"""
     return redirect('/register')
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -119,7 +122,7 @@ def profile(username):
     # using a try/except block in case there is no username variable stored in session
     try:
         # Check that the user is logged in
-        if username in session['username']:
+        if check_login(username):
             form = Feedback_Form()
             # Get the user's profile information from the database:
             user = User.query.filter(User.username == username).first()
@@ -145,7 +148,7 @@ def profile(username):
 def delete(username):
     """Functionality to DELETE a user and his/her feedback posts """
     # Check if correct user logged in:
-    if username in session['username']:
+    if check_login(username):
         # Check if the user has any feedback posts in the database:
         if Feedback.query.filter(Feedback.username == username).first():
             # delete the user's posts
@@ -170,7 +173,7 @@ def add_feedback(username):
     # POST route
     if form.validate_on_submit():
         # Get the data from the form
-        feedback = form.feedback.data
+        feedback = form.content.data
         # Retrieve the user details from the database
         User.query.filter(User.username == username).first()
         # Create a new_feedback object
@@ -184,5 +187,37 @@ def add_feedback(username):
     # Send user to their profile page
     return redirect(f"/users/{username}")    
 
-        
+
+@app.route('/feedback/<feedback_id>/update', methods=["GET", "POST"])
+def edit_feedback(feedback_id):
+    """Enables a user to edit a Feedback post"""
+    feedback = Feedback.query.get_or_404(feedback_id)
+    # Set the feedback comment in the database to the form
+    form = Feedback_Form(content=feedback.content)
+    # POST route
+    if form.validate_on_submit():
+        # Get the data from the form
+        updated_feedback = form.content.data
+        feedback.content = updated_feedback
+        db.session.add(feedback)
+        db.session.commit()
+        return redirect(f"/users/{feedback.username}")
+    else:
+        # GET route
+        # use try/except block to check if there is a username in session
+        try: 
+            # Check if this username 'owns' the feedback post
+            if check_login(feedback.username):
+                return render_template('edit_feedback.html',  feedback=feedback, form=form)
+            else:
+                # User does not 'own' that feedback
+                flash("ERROR: You do not have access")
+            return redirect(f"/users/{session['username'][0]}")
+
+        except KeyError:
+            flash("You must be logged in to see that page")
+            return redirect("/login")
+
+  
+
 

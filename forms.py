@@ -17,4 +17,4 @@ class Login(FlaskForm):
 
 class Feedback_Form(FlaskForm):
     """User Submits Feedback"""
-    feedback = TextAreaField("Add Feedback", validators=[InputRequired()])
+    content = TextAreaField("Add Feedback", validators=[InputRequired()])
